@@ -5,7 +5,7 @@ import logging
 import pika
 from libs.helper import init_logging
 from libs.helper import init_rabbit
-from libs.spiders import ReviewSpider
+from libs.spiders import UserSpider
 
 rabbit = None
 
@@ -15,7 +15,7 @@ def parse_arguments():
     Parse arguments from command line and return the results.
     :return: parsed args
     """
-    parser = argparse.ArgumentParser(description="PB Review Spider.")
+    parser = argparse.ArgumentParser(description="PB User Spider.")
     parser.add_argument("--debug", action="store_true",
                         help="Use this option to enable debug mode.")
     parser.add_argument("--rabbit-mq-url", action="store", dest="mq_url",
@@ -38,15 +38,11 @@ def order_callback(channel, method, properties, body):
     try:
         order = json.loads(body.decode())
         logging.info(
-            "Start crawling reviews of app [%d] since [%d] in [%s]",
-            order["appid"],
-            order["last_crawled"],
-            order["language"]
+            "Start crawling user [%s]",
+            str(order["steamid"])
         )
-        spider = ReviewSpider(
-            order["appid"],
-            order["last_crawled"],
-            order["language"],
+        spider = UserSpider(
+            order["steamid"],
             channel,
             method,
             rabbit.channel()
@@ -61,7 +57,7 @@ def order_callback(channel, method, properties, body):
 def main():
     global rabbit
     # Initialise logging.
-    init_logging("review")
+    init_logging("user")
     # Parse arguments.
     args = parse_arguments()
     # Establish MQ connection.
@@ -73,7 +69,7 @@ def main():
     # Set up subscription and start consuming.
     rabbit_channel = rabbit.channel()
     rabbit_channel.basic_qos(prefetch_count=1)
-    rabbit_channel.basic_consume(order_callback, queue="review.order")
+    rabbit_channel.basic_consume(order_callback, queue="user.order")
     rabbit_channel.start_consuming()
 
 
