@@ -34,6 +34,7 @@ class ReviewSpider(object):
         self.api_params["start_offset"] = order * 20
         while True:
             logging.info(
+                "Crawling %d~%d",
                 self.api_params["start_offset"] + 1,
                 self.api_params["start_offset"] + 20
             )
@@ -78,7 +79,6 @@ class ReviewSpider(object):
                 time.sleep(10)
                 continue
             # If reaching here, the query is successful.
-            print("%d to %d", self.api_params["start_offset"], self.api_params["start_offset"] + 20 * thread_num)
             self.api_params["start_offset"] += 20 * thread_num
         logging.info("Crawl finished.")
 
