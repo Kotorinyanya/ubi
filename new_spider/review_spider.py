@@ -12,7 +12,7 @@ from helper import init_logging
 
 class ReviewSpider(object):
     """
-    This class crawls reviews and send ACK after finishing.
+    This class crawls reviews.
     """
     API_URL = "https://store.steampowered.com/appreviews/{}"
     API_PARAMS = {
@@ -43,7 +43,7 @@ class ReviewSpider(object):
                 api_raw_result = requests.get(
                     url=self.api_url,
                     params=self.api_params,
-                    timeout=30
+                    timeout=10
                 )
             except Exception as e:
                 logging.error("Failed to request API: %s", e)
@@ -75,7 +75,6 @@ class ReviewSpider(object):
                     break
             except KeyError as e:
                 logging.error("Incorrect result format: %s", e)
-                logging.error("API cannot handle requests now.")
                 time.sleep(10)
                 continue
             # If reaching here, the query is successful.
@@ -203,7 +202,6 @@ class ReviewSpider(object):
                         str(review["recommendationid"]),
                         e
                     )
-            self.dolphin.commit()
         return False
 
     def _add_stat(self, appid, review_date):
@@ -255,7 +253,17 @@ class ReviewSpider(object):
             return False
 
 
-def boot_spider(appid, last_crawled, language, order, thread_num, args):
+def spider_booster(appid, last_crawled, language, order, thread_num, args):
+    """
+    This function start a spider to crawl reviews.
+    :param appid:
+    :param last_crawled:
+    :param language:
+    :param order:
+    :param thread_num:
+    :param args:
+    :return:
+    """
     logging.info(
         "Start crawling reviews of app [%d] since [%d] in [%s]",
         appid,
@@ -269,16 +277,20 @@ def boot_spider(appid, last_crawled, language, order, thread_num, args):
 
 
 def main():
+    # Initialise.
     args = parse_arguments()
     init_logging("review")
     dolphin = get_dolphin(args)
-    apps = get_apps(dolphin)
     start_time = int(time.time())
+    # Get apps to crawl.
+    apps = get_apps(dolphin)
+    # Start crawling by each app.
     for app in apps:
         threads = []
+        # Start threads for current app.
         for i in range(0, args.thread):
             thread = threading.Thread(
-                target=boot_spider,
+                target=spider_booster,
                 name="Spider" + str(i),
                 args=(
                     app["appid"],
@@ -291,8 +303,10 @@ def main():
             )
             threads.append(thread)
             thread.start()
+        # Wait for all threads to finish.
         for thread in threads:
             thread.join()
+        # Update this app's "crawled_at"
         update_app(app["appid"], start_time, dolphin)
     dolphin.close()
 
@@ -308,7 +322,6 @@ def update_app(appid, start_time, dolphin):
     update_sql = "UPDATE `apps` SET `crawled_at` = %s WHERE `appid` = %s"
     with dolphin.cursor() as cursor:
         cursor.execute(update_sql, (start_time, appid))
-    dolphin.commit()
 
 
 def get_apps(dolphin):

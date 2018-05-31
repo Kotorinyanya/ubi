@@ -11,7 +11,7 @@
  Target Server Version : 50722
  File Encoding         : 65001
 
- Date: 30/05/2018 11:47:00
+ Date: 01/06/2018 02:18:17
 */
 
 SET NAMES utf8mb4;
@@ -24,8 +24,8 @@ DROP TABLE IF EXISTS `apps`;
 CREATE TABLE `apps`  (
   `appid` int(11) NOT NULL,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `labels` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `types` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `labels` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+  `types` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
   `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `is_concerned` int(11) NULL DEFAULT NULL,
   `crawled_at` bigint(20) NULL DEFAULT 0,
@@ -71,7 +71,7 @@ CREATE TABLE `review_changes`  (
   `updated_at` timestamp(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `appid and date`(`appid`, `date`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for reviews
@@ -118,6 +118,7 @@ CREATE TABLE `users`  (
   `badge_count` int(11) NULL DEFAULT NULL,
   `group_count` int(11) NULL DEFAULT NULL,
   `game_count` int(11) NULL DEFAULT NULL,
+  `dlc_count` int(11) NULL DEFAULT 0,
   `friend_count` int(11) NULL DEFAULT NULL,
   `registered_at` int(11) NULL DEFAULT NULL,
   `created_at` timestamp(0) NULL DEFAULT CURRENT_TIMESTAMP,
