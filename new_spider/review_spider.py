@@ -336,7 +336,8 @@ def get_dolphin(args):
         password=args.db_password,
         db=args.db_name,
         charset="utf8mb4",
-        cursorclass=pymysql.cursors.DictCursor
+        cursorclass=pymysql.cursors.DictCursor,
+        autocommit=True
     )
     return dolphin
 
