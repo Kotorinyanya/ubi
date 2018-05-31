@@ -197,7 +197,7 @@ class ReviewSpider(object):
             with self.dolphin.cursor() as cursor:
                 try:
                     cursor.execute(create_sql, parsed_review)
-                except pymysql.err.InternalError as e:
+                except Exception as e:
                     logging.info(
                         "Failed to save review [%s]: %s",
                         str(review["recommendationid"]),
