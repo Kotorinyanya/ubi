@@ -11,7 +11,7 @@
  Target Server Version : 50722
  File Encoding         : 65001
 
- Date: 01/06/2018 02:18:17
+ Date: 01/06/2018 02:26:33
 */
 
 SET NAMES utf8mb4;
@@ -28,6 +28,7 @@ CREATE TABLE `apps`  (
   `types` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
   `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `is_concerned` int(11) NULL DEFAULT NULL,
+  `with_achievement` int(11) NULL DEFAULT 0,
   `crawled_at` bigint(20) NULL DEFAULT 0,
   `created_at` timestamp(0) NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
@@ -84,6 +85,7 @@ CREATE TABLE `reviews`  (
   `playtime_forever` int(11) NULL DEFAULT NULL,
   `playtime_last_two_weeks` int(11) NULL DEFAULT NULL,
   `last_played` bigint(20) NULL DEFAULT NULL,
+  `achievement_ratio` double NULL DEFAULT NULL,
   `language` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
   `steam_weight` double NULL DEFAULT NULL,
