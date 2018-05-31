@@ -35,7 +35,8 @@ class ReviewSpider(object):
             try:
                 api_raw_result = requests.get(
                     url=self.api_url,
-                    params=self.api_params
+                    params=self.api_params,
+                    timeout=30
                 )
             except Exception as e:
                 logging.error("Failed to request API: %s", e)
@@ -128,7 +129,14 @@ class ReviewSpider(object):
                       "%(badge_count)s, %(group_count)s, %(game_count)s, %(friend_count)s," \
                       "%(registered_at)s)"
                 with self.dolphin.cursor() as cursor:
-                    cursor.execute(create_sql, parsed_user)
+                    try:
+                        cursor.execute(create_sql, parsed_user)
+                    except pymysql.err.InternalError as e:
+                        logging.info(
+                            "Failed to save user [%s]: %s",
+                            str(review["author"]["steamid"]),
+                            e
+                        )
 
             # Save the review and do stat.
             review_date = datetime.datetime.fromtimestamp(parsed_review["edited_at"]).strftime('%Y-%m-%d')
@@ -173,15 +181,22 @@ class ReviewSpider(object):
                       "WHERE `recommendationid` = %(recommendationid)s"
                 if parsed_review["type"] != old_review_type:
                     if parsed_review["type"] == "positive":
-                        update_sql = "UPDATE `review_changes` SET `down_to_up` = `down_to_up`+1 WHERE `appid` = %s AND" \
-                                     "`date`=str_to_date(%s, '%%Y-%%m-%%d')"
+                        update_sql = "UPDATE `review_changes` SET `down_to_up` = `down_to_up`+1 " \
+                                     "WHERE `appid` = %s AND `date`=str_to_date(%s, '%%Y-%%m-%%d')"
                     else:
-                        update_sql = "UPDATE `review_changes` SET `up_to_down` = `up_to_down`+1 WHERE `appid` = %s AND" \
-                                     "`date`=str_to_date(%s, '%%Y-%%m-%%d')"
+                        update_sql = "UPDATE `review_changes` SET `up_to_down` = `up_to_down`+1 " \
+                                     "WHERE `appid` = %s AND `date`=str_to_date(%s, '%%Y-%%m-%%d')"
                     with self.dolphin.cursor() as cursor:
                         cursor.execute(update_sql, (self.appid, review_date))
             with self.dolphin.cursor() as cursor:
-                cursor.execute(create_sql, parsed_review)
+                try:
+                    cursor.execute(create_sql, parsed_review)
+                except pymysql.err.InternalError as e:
+                    logging.info(
+                        "Failed to save review [%s]: %s",
+                        str(review["recommendationid"]),
+                        e
+                    )
             self.dolphin.commit()
         return False
 
@@ -206,7 +221,7 @@ class ReviewSpider(object):
     def _has_review(self, recommendationid):
         """
         Check if a review already exists in the database.
-        :param steamid:
+        :param recommendationid:
         :return:
         """
         query_sql = "SELECT `type` FROM `reviews` where `recommendationid` = %s"
