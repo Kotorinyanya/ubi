@@ -11,7 +11,7 @@
  Target Server Version : 50722
  File Encoding         : 65001
 
- Date: 01/06/2018 02:26:33
+ Date: 01/06/2018 02:32:13
 */
 
 SET NAMES utf8mb4;
@@ -100,7 +100,8 @@ CREATE TABLE `reviews`  (
   `updated_at` timestamp(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
   PRIMARY KEY (`recommendationid`) USING BTREE,
   INDEX `appid and type`(`appid`, `type`) USING BTREE,
-  INDEX `language`(`language`) USING BTREE
+  INDEX `language`(`language`) USING BTREE,
+  INDEX `user`(`steamid`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
