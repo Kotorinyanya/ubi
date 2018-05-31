@@ -5,6 +5,7 @@ import json
 import logging
 import pymysql
 import requests
+import threading
 import time
 from helper import init_logging
 
@@ -25,12 +26,17 @@ class ReviewSpider(object):
         self.last_crawled = last_crawled
         self.language = language
         self.dolphin = dolphin
-        self.api_params = self.API_PARAMS
+        self.api_params = self.API_PARAMS.copy()
         self.api_params["language"] = language
         self.api_url = self.API_URL.format(appid)
 
-    def crawl(self):
+    def crawl(self, order=0, thread_num=1):
+        self.api_params["start_offset"] = order * 20
         while True:
+            logging.info(
+                self.api_params["start_offset"] + 1,
+                self.api_params["start_offset"] + 20
+            )
             # Try to request API.
             try:
                 api_raw_result = requests.get(
@@ -72,9 +78,9 @@ class ReviewSpider(object):
                 time.sleep(10)
                 continue
             # If reaching here, the query is successful.
-            self.api_params["start_offset"] += api_result["query_summary"]["num_reviews"]
-            logging.info("Crawled %d reviews so far.", self.api_params["start_offset"])
-        logging.info("Crawl finished after getting %d reviews.", self.api_params["start_offset"])
+            print("%d to %d", self.api_params["start_offset"], self.api_params["start_offset"] + 20 * thread_num)
+            self.api_params["start_offset"] += 20 * thread_num
+        logging.info("Crawl finished.")
 
     def _save(self, reviews):
         for review in reviews:
@@ -249,22 +255,46 @@ class ReviewSpider(object):
             return False
 
 
+def boot_spider(appid, last_crawled, language, order, thread_num, args):
+    logging.info(
+        "Start crawling reviews of app [%d] since [%d] in [%s]",
+        appid,
+        last_crawled,
+        language
+    )
+    dolphin = get_dolphin(args)
+    spider = ReviewSpider(appid, last_crawled, language, dolphin)
+    spider.crawl(order, thread_num)
+    dolphin.close()
+
+
 def main():
     args = parse_arguments()
     init_logging("review")
     dolphin = get_dolphin(args)
     apps = get_apps(dolphin)
+    start_time = int(time.time())
     for app in apps:
-        start_time = int(time.time())
-        logging.info(
-            "Start crawling reviews of app [%d] since [%d] in [%s]",
-            app["appid"],
-            app["crawled_at"],
-            args.review_language
-        )
-        spider = ReviewSpider(app["appid"], app["crawled_at"], args.review_language, dolphin)
-        spider.crawl()
+        threads = []
+        for i in range(0, args.thread):
+            thread = threading.Thread(
+                target=boot_spider,
+                name="Spider" + str(i),
+                args=(
+                    app["appid"],
+                    app["crawled_at"],
+                    args.review_language,
+                    i,
+                    args.thread,
+                    args
+                )
+            )
+            threads.append(thread)
+            thread.start()
+        for thread in threads:
+            thread.join()
         update_app(app["appid"], start_time, dolphin)
+    dolphin.close()
 
 
 def update_app(appid, start_time, dolphin):
@@ -332,6 +362,8 @@ def parse_arguments():
     parser.add_argument("--language", action="store",
                         dest="review_language", default="all",
                         help="Specify reviews of what language to crawl.")
+    parser.add_argument("--thread", action="store", default=5, type=int,
+                        help="Specify threads of this spider.")
     return parser.parse_args()
 
 
