@@ -137,7 +137,7 @@ class ReviewSpider(object):
                 with self.dolphin.cursor() as cursor:
                     try:
                         cursor.execute(create_sql, parsed_user)
-                    except pymysql.err.InternalError as e:
+                    except Exception as e:
                         logging.info(
                             "Failed to save user [%s]: %s",
                             str(review["author"]["steamid"]),
