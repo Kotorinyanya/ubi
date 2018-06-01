@@ -77,44 +77,34 @@ class UserSpider(object):
         pattern = re.compile('.*?total">(.*?)</span>', re.S)
         soup = BeautifulSoup(raw_result.text, 'lxml')
         dlc = soup.select('.gamecollector_showcase .value')
-        dlc1 = 0
+        dlc1 = "0"
         if dlc:
-            dlc1 = soup.select('.gamecollector_showcase .value')[0].get_text()
-        badges = 0
+            dlc1 = soup.select('.gamecollector_showcase .value')[1].get_text().\
+                replace('\t','').replace('\n', '').replace('\r', '')
+        badges = "0"
         ach = soup.select('.profile_count_link_preview_ctn .profile_count_link_total')
         if ach:
-            badges = soup.select('.profile_count_link_preview_ctn .profile_count_link_total')[0].get_text().replace(
-                '\t',
-                '').replace(
-                '\n', '').replace('\r', '')
+            badges = soup.select('.profile_count_link_preview_ctn .profile_count_link_total')[0].get_text()
         sel2 = soup.find_all(href=re.compile('/screenshots/'))
-        screenshots = 0
+        screenshots = "0"
         if sel2:
             screenshots = sel2
-            screenshots = re.findall(pattern, str(screenshots))[0].replace('\t', '').replace('\n', '').replace('\r',
-                                                                                                               '').replace(
-                ',', '')
-        workshop_item = 0
+            screenshots = re.findall(pattern, str(screenshots))[0]
+        workshop_item = "0"
         sel3 = soup.find_all(href=re.compile('/myworkshopfiles/'))
         if sel3:
             workshop_item = sel3
-            workshop_item = re.findall(pattern, str(workshop_item))[0].replace('\t', '').replace('\n', '').replace('\r',
-                                                                                                                   '').replace(
-                ',', '')
-        friend_count = 0
+            workshop_item = re.findall(pattern, str(workshop_item))[0]
+        friend_count = "0"
         sel4 = soup.find_all(href=re.compile('/friends/'))
         if sel4:
             friend_count = sel4
-            friend_count = re.findall(pattern, str(friend_count))[0].replace('\t', '').replace('\n', '').replace('\r',
-                                                                                                                 '').replace(
-                ',', '')
-        group_count = 0
+            friend_count = re.findall(pattern, str(friend_count))[0]
+        group_count = "0"
         sel5 = soup.find_all(href=re.compile('/groups/'))
         if sel5:
             group_count = sel5
-            group_count = re.findall(pattern, str(group_count))[0].replace('\t', '').replace('\n', '').replace('\r',
-                                                                                                               '').replace(
-                ',', '')
+            group_count = re.findall(pattern, str(group_count))[0]
         self.user["dlc_count"] = int(dlc1.replace(',', ''))
         self.user["badge_count"] = int(badges.replace(',', ''))
         self.user["screenshot_count"] = int(screenshots.replace(',', ''))
