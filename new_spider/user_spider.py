@@ -232,7 +232,10 @@ class UserSpider(object):
                      "`registered_at` = %(registered_at)s " \
                      "WHERE `steamid` = %(steamid)s"
         with self.dolphin.cursor() as cursor:
-            cursor.execute(update_sql, self.user)
+            try:
+                cursor.execute(update_sql, self.user)
+            except Exception as e:
+                logging.error("Failed to save user [%s]: %s", self.steamid, e)
 
 
 def spider_booster(user_queue, args):
