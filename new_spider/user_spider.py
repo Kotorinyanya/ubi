@@ -328,7 +328,7 @@ def parse_arguments():
     Parse arguments from command line and return the results.
     :return: parsed args
     """
-    parser = argparse.ArgumentParser(description="PB Review Spider.")
+    parser = argparse.ArgumentParser(description="PB User Spider.")
     parser.add_argument("--debug", action="store_true",
                         help="Use this option to enable debug mode.")
     parser.add_argument("--mysql-host", action="store", dest="db_host",
