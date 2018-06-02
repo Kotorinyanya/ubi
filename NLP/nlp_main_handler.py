@@ -57,7 +57,6 @@ class NLPMH:
         sorted_data_dict = sorted(weighted_data_dict, key=lambda k: k['weight'])
         return sorted_data_dict
 
-    def get_keywords(self, data_dict):
 
     def piece_text(self, data_dict):
         data_dict = data_dict[:100]
