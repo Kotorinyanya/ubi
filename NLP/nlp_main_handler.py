@@ -10,12 +10,11 @@ class NLPMH:
         # sort data by weight
         self.sorted_data_dict = self.sort_reviews_by_weight(self.data_dict)
 
-        # try:
-        #     self.api_key = os.environ.get('API_KEY')
-        # except Exception as e:
-        #     raise Exception("please add your Paralleldots API_KEY to your environment variable")
+        try:
+            self.api_key = os.environ.get('API_KEY')
+        except Exception as e:
+            raise Exception("please add your Paralleldots API_KEY to your environment variable")
 
-        self.api_key = 'bSrmexJKMkkSQZIPmAUwRfh7ypzR0c6Gn9jhBegopu0'
 
         paralleldots.set_api_key(self.api_key)
 
@@ -68,12 +67,7 @@ class NLPMH:
                 text += data_dict[i] + '\n'
                 text += data_dict[i] + '\n'
                 text += data_dict[i] + '\n'
-                text += data_dict[i] + '\n'
             elif i <= len(data_dict) * 0.2:
-                text += data_dict[i] + '\n'
-                text += data_dict[i] + '\n'
-                text += data_dict[i] + '\n'
-            elif i <= len(data_dict) * 0.4:
                 text += data_dict[i] + '\n'
                 text += data_dict[i] + '\n'
             else:
@@ -85,3 +79,4 @@ class NLPMH:
 if __name__ == '__main__':
     data = []
     n = NLPMH(data)
+    print(n.result)

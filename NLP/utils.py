@@ -188,6 +188,7 @@ def keras_model_path(language):
     else:
         return ''
 
+
 # build training set
 def generate_cart_data(datas, feature_map, output_map):
     n_samples = len(datas)
@@ -197,7 +198,10 @@ def generate_cart_data(datas, feature_map, output_map):
         one_sample_X = []
         for feature in feature_map:
             one_sample_X.append(data[feature])
-        Y[i] = data[output_map[0]]
+        try:
+            Y[i] = data[output_map[0]]
+        except:
+            Y[i] = 0
         try:
             X[i] = one_sample_X
         except Exception as e:

@@ -65,7 +65,7 @@ def train(data_dict, emebedding_path, language):
     num_gpus = get_available_gpus()
 
     # model parameters
-    num_filters = 64
+    num_filters = 32
     embed_dim = 300
     weight_decay = 1e-4
     learning_rate = 0.001
@@ -108,11 +108,11 @@ def train(data_dict, emebedding_path, language):
     model.add(Conv1D(num_filters, 7, activation='relu', padding='same'))
     model.add(GlobalMaxPooling1D())
     # model.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))
-    model.add(Dense(32, activation='relu', kernel_regularizer=regularizers.l2(weight_decay)))
-    model.add(Dropout(0.5))
+    # model.add(Dense(32, activation='relu', kernel_regularizer=regularizers.l2(weight_decay)))
+    # model.add(Dropout(0.5))
     model.add(Dense(16, activation='relu', kernel_regularizer=regularizers.l2(weight_decay)))
     model.add(Dropout(0.5))
-    model.add(Dense(1, activation='sigmoid'))  # multi-label (k-hot encoding)
+    model.add(Dense(1, activation='sigmoid'))
 
     adam = optimizers.Adam(lr=learning_rate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
     try:
