@@ -1,0 +1,17 @@
+paralleldots
+keras
+pytorch
+torchvision
+tensorflow-gpu
+matplotlib
+scikit-learn
+nltk
+matplotlib
+seaborn
+pandas
+jupyter
+tqdm
+xlrd
+jieba
+tinysegmenter
+cltk
