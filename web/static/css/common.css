@@ -18,7 +18,7 @@ body:before {
     left: 0;
     background: url(/static/img/background.png) center 0 no-repeat;
     background-size: cover;
-    opacity: .2;
+    opacity: .45;
 }
 
 .app-jumbo {
@@ -46,6 +46,21 @@ body:before {
     background: rgba(0, 0, 0, 0.4);
 }
 
-.trend_chart {
+#trend-chart svg {
+    height: 27rem;
+}
 
+/* Libs */
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
