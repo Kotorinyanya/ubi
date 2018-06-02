@@ -1,0 +1,60 @@
+{% extends "framework.html" %}
+{% set active_page = "home" %}
+{% block content %}
+  <div class="jumbotron app-jumbo">
+    <h1 class="display-4">Potato Monitor</h1>
+    <p class="lead">Watch your potatoes grow here.</p>
+    <hr class="my-4">
+    {% for app in apps %}
+      <div class="row app-row">
+        <div class="col-lg-8 offset-lg-2">
+          <a href="{{ url_for("detail", appid=app["appid"]) }}">
+            <div class="card text-white app-card">
+              <img class="card-img app-img" src="{{ app["image"] }}"
+                   alt="{{ app["name"] }}">
+              <div class="card-img-overlay app-img-overlay">
+                <table style="height: 100%;width:  100%;">
+                  <tbody>
+                  <tr>
+                    <td class="align-middle">
+                      <h1>{{ app["name"] }}</h1>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+                <div class="app-detail" style="display: none">
+                  <span class="oi oi-comment-square" title="Review Count" aria-hidden="true"></span>
+                  {{ app["review_count"] }}&nbsp;&nbsp;
+                  <span class="oi oi-thumb-up" title="Positive Reviews" aria-hidden="true"></span>
+                  {{ app["positive_count"] }}
+                  (+{{ app["new_up"] + app["down_to_up"] }})
+                  &nbsp;&nbsp;
+                  <span class="oi oi-thumb-down" title="Negative Reviews" aria-hidden="true"></span>
+                  {{ app["negative_count"] }}
+                  (+{{ app["new_down"] + app["up_to_down"] }})
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+      <hr>
+    {% endfor %}
+  </div>
+{% endblock %}
+{% block extra_js %}
+  <script>
+      $(".app-img-overlay").hover(
+          function () {
+              $(this).prev().addClass("app-img-hover");
+              $(this).children("table").css("height", "70%");
+              $(this).children(".app-detail").show();
+          },
+          function () {
+              $(this).prev().removeClass("app-img-hover");
+              $(this).children("table").css("height", "100%");
+              $(this).children(".app-detail").hide();
+          }
+      );
+  </script>
+{% endblock %}

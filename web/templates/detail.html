@@ -1,0 +1,17 @@
+{% extends "framework.html" %}
+{% block content %}
+  <div class="jumbotron app-jumbo">
+    <h1 class="display-4">{{ detail["app"]["name"] }}</h1>
+    <p class="lead">Details and trends of this game.</p>
+    <hr class="my-4">
+    <h1>Review Trend</h1>
+    <div id="trend_chart">
+      <svg></svg>
+    </div>
+    <h1>Heated Topics</h1>
+    <p>ANOTHER GRAPH HERE.</p>
+  </div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/detail.js"></script>
+{% endblock %}
