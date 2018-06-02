@@ -4,14 +4,16 @@ import os
 
 class NLPMH:
     # NLP Main Handler
-    def __init__(self, data_dict):
+    def __init__(self, data_dict, api_key):
         self.data_dict = data_dict
         self.language = data_dict[0]['language']
         # sort data by weight
         self.sorted_data_dict = self.sort_reviews_by_weight(self.data_dict)
 
         try:
-            self.api_key = os.environ.get('API_KEY')
+            # self.api_key = os.environ.get('API_KEY')
+            # print(self.api_key)
+            self.api_key = api_key
         except Exception as e:
             raise Exception("please add your Paralleldots API_KEY to your environment variable")
 
@@ -63,19 +65,19 @@ class NLPMH:
         text = ''
         for i in range(0, len(data_dict)):
             if i <= len(data_dict) * 0.1:
-                text += data_dict[i] + '\n'
-                text += data_dict[i] + '\n'
-                text += data_dict[i] + '\n'
+                text += data_dict[i]['content'] + '\n'
+                text += data_dict[i]['content'] + '\n'
+                text += data_dict[i]['content'] + '\n'
             elif i <= len(data_dict) * 0.2:
-                text += data_dict[i] + '\n'
-                text += data_dict[i] + '\n'
+                text += data_dict[i]['content'] + '\n'
+                text += data_dict[i]['content'] + '\n'
             else:
-                text += data_dict[i] + '\n'
+                text += data_dict[i]['content'] + '\n'
 
         return text
 
 
 if __name__ == '__main__':
-    data = []
-    n = NLPMH(data)
+    data = [{'content': 'I am cute', 'language': 'english', 'review_weight': 0.7, 'user_weight': 0.8}]
+    n = NLPMH(data, api_key='')
     print(n.result)
