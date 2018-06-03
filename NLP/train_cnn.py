@@ -61,7 +61,7 @@ def train(data_dict, emebedding_path, language):
 
     # training params
     batch_size = 256
-    num_epochs = 300
+    num_epochs = 100
     num_gpus = get_available_gpus()
 
     # model parameters
@@ -143,12 +143,18 @@ def train(data_dict, emebedding_path, language):
     plt.legend(['loss', 'val_loss'])
     plt.show()
 
+    # plot y_predict
+    plt.title(language + ' ' + 'predict')
+    plt.plot(y_test)
+    plt.plot(model.predict(word_seq_test))
+    plt.legend(['y_text', 'y_predict'])
+    plt.show()
+
     # plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
 
 
 DATA_PATH = './data/reviews_language_helpful_funny_comment_weight_stripped.xlsx'
 EMBEDDING_DIR = '/home/huze/fasttext/'
-
 
 # read data form xlsx
 data_dict, label_name = read_xlsx(DATA_PATH)
@@ -158,7 +164,6 @@ languages = set()
 for data in data_dict:
     languages.add(data['language'])
 print(languages)
-
 
 supported_languages = ['english', 'schinese', 'japanese', 'french']
 for language in supported_languages:
