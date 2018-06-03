@@ -1,4 +1,5 @@
 import paralleldots
+import json
 import os
 
 
@@ -17,7 +18,6 @@ class NLPMH:
         except Exception as e:
             raise Exception("please add your Paralleldots API_KEY to your environment variable")
 
-
         paralleldots.set_api_key(self.api_key)
 
         self.text = self.piece_text(self.sorted_data_dict)
@@ -35,7 +35,9 @@ class NLPMH:
             self.key_phrase = paralleldots.phrase_extractor(text)
             self.emotion = paralleldots.emotion(text)
         elif self.language == 'schinese':
-            self.key_words = []  # API not yet available
+            self.key_words = {
+                'Error': 'The lang_code is not among the supported languages, supported languages: en, pt, zh, es, de, fr, nl, it, ja, th, da, fi, el, ru, ar.',
+                'code': 400}  # API not yet available
             self.key_phrase = paralleldots.multilang_keywords(text, 'zh')
             self.emotion = paralleldots.emotion(text, 'zh')
         elif self.language == 'french':
@@ -59,25 +61,30 @@ class NLPMH:
         sorted_data_dict = sorted(weighted_data_dict, key=lambda k: k['weight'])
         return sorted_data_dict
 
-
     def piece_text(self, data_dict):
-        data_dict = data_dict[:100]
+        data_dict = data_dict[:20]
         text = ''
         for i in range(0, len(data_dict)):
-            if i <= len(data_dict) * 0.1:
-                text += data_dict[i]['content'] + '\n'
-                text += data_dict[i]['content'] + '\n'
-                text += data_dict[i]['content'] + '\n'
-            elif i <= len(data_dict) * 0.2:
-                text += data_dict[i]['content'] + '\n'
-                text += data_dict[i]['content'] + '\n'
-            else:
-                text += data_dict[i]['content'] + '\n'
+            # if i <= len(data_dict) * 0.1:
+            #     text += data_dict[i]['content'] + '\n'
+            #     text += data_dict[i]['content'] + '\n'
+            #     text += data_dict[i]['content'] + '\n'
+            # elif i <= len(data_dict) * 0.2:
+            #     text += data_dict[i]['content'] + '\n'
+            #     text += data_dict[i]['content'] + '\n'
+            # else:
+            text += data_dict[i]['content'] + '\n'
 
         return text
 
 
 if __name__ == '__main__':
-    data = [{'content': 'I am cute', 'language': 'english', 'review_weight': 0.7, 'user_weight': 0.8}]
-    n = NLPMH(data, api_key='')
+    data = [{'content': '嘤嘤嘤，我是小可爱', 'language': 'schinese', 'review_weight': 0.7, 'user_weight': 0.8}]
+    f = open("out")
+    d = json.loads(f.read())
+    n = NLPMH(
+        d["positive"]["359550"]["15"]["2018-05-30"]["english"],
+        api_key='bSrmexJKMkkSQZIPmAUwRfh7ypzR0c6Gn9jhBegopu0'
+    )
+    # n = NLPMH(data, api_key='bSrmexJKMkkSQZIPmAUwRfh7ypzR0c6Gn9jhBegopu0')
     print(n.result)
