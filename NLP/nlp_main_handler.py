@@ -62,7 +62,7 @@ class NLPMH:
         return sorted_data_dict
 
     def piece_text(self, data_dict):
-        data_dict = data_dict[:20]
+        data_dict = data_dict[:10]
         text = ''
         for i in range(0, len(data_dict)):
             # if i <= len(data_dict) * 0.1:
