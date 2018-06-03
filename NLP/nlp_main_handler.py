@@ -5,7 +5,7 @@ import os
 
 class NLPMH:
     # NLP Main Handler
-    def __init__(self, data_dict, api_key):
+    def __init__(self, data_dict, api_key, num_reviews=10):
         self.data_dict = data_dict
         self.language = data_dict[0]['language']
         # sort data by weight
@@ -22,7 +22,7 @@ class NLPMH:
 
         self.text = self.piece_text(self.sorted_data_dict)
 
-        self.go(self.text, self.language)
+        self.go(self.text, self.language, num_reviews)
 
         self.result = dict()
         self.result['keywords'] = self.key_words
@@ -61,8 +61,8 @@ class NLPMH:
         sorted_data_dict = sorted(weighted_data_dict, key=lambda k: k['weight'])
         return sorted_data_dict
 
-    def piece_text(self, data_dict):
-        data_dict = data_dict[:10]
+    def piece_text(self, data_dict, num_reviews):
+        data_dict = data_dict[:num_reviews]
         text = ''
         for i in range(0, len(data_dict)):
             # if i <= len(data_dict) * 0.1:

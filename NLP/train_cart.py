@@ -8,6 +8,7 @@ from sklearn.ensemble import AdaBoostRegressor
 from sklearn.ensemble import RandomForestRegressor
 import pickle
 from sklearn.externals import joblib
+from sklearn import tree
 
 # load data
 file_path = './data/reviews_users_weight_stripped.xlsx'
@@ -41,8 +42,9 @@ train_X, train_Y = generate_cart_data(train_data, feature_map, output_map)
 validation_X, validation_Y = generate_cart_data(validation_data, feature_map, output_map)
 
 # train
-estimator = BaggingRegressor()
+# estimator = BaggingRegressor()
 # estimator = RandomForestRegressor(n_estimators=1000)
+estimator = DecisionTreeRegressor()
 estimator.fit(train_X, train_Y)
 y_predict = estimator.predict(validation_X)
 estimator.score(validation_X, validation_Y)
@@ -58,3 +60,4 @@ plt.legend()
 plt.show()
 
 joblib.dump(estimator, './models/CART.pkl')
+tree.export_graphviz(estimator, 'tree.dot')
