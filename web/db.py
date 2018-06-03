@@ -1,3 +1,4 @@
+import heapq
 import json
 import pymysql
 
@@ -18,6 +19,8 @@ def init_dolphin():
     :return: None
     """
     global dolphin
+    if dolphin:
+        dolphin.close()
     dolphin = pymysql.connect(
         host=DB_PARAMS["host"],
         port=DB_PARAMS["port"],
@@ -120,11 +123,12 @@ def get_review_result(appid, window_length, end_date):
     """
     query_sql = "SELECT " \
                 "`top_up_tags`, " \
-                "`top_up_setences`, " \
+                "`top_up_sentences`, " \
                 "`top_up_reviews`, " \
                 "`top_down_tags`, " \
-                "`top_down_setences`, " \
-                "`top_down_reviews` " \
+                "`top_down_sentences`, " \
+                "`top_down_reviews`, " \
+                "`emotion` " \
                 "FROM `results` " \
                 "WHERE `appid` = %s " \
                 "AND `window_length` = %s " \
@@ -136,7 +140,21 @@ def get_review_result(appid, window_length, end_date):
     # Decode the JSON texts.
     if result:
         for x in result.keys():
-            result[x] = json.loads(result[x])
+            result2 = json.loads(result[x])
+            result[x] = dict()
+            # Get top 8.
+            largest = heapq.nlargest(8, result2, key=result2.get)
+            for k in largest:
+                result[x][k] = result2[k]
+        # Get reviews.
+        ups = []
+        downs = []
+        for rid in result["top_up_reviews"]:
+            ups.append(get_review(rid))
+        for rid in result["top_down_reviews"]:
+            downs.append(get_review(rid))
+        result["top_up_reviews"] = ups
+        result["top_down_reviews"] = downs
     return result
 
 

@@ -21,6 +21,10 @@ body:before {
     opacity: .45;
 }
 
+svg {
+    width: 100%;
+}
+
 .app-jumbo {
     background-color: rgba(233, 236, 239, 0.8);
 }

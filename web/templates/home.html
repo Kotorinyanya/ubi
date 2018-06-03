@@ -10,7 +10,7 @@
         <div class="col-lg-8 offset-lg-2">
           <a href="{{ url_for("detail", appid=app["appid"]) }}">
             <div class="card text-white app-card">
-              <img class="card-img app-img" src="{{ app["image"] }}"
+              <img class="card-img app-img" src="/static/img/{{ app["appid"] }}.jpg"
                    alt="{{ app["name"] }}">
               <div class="card-img-overlay app-img-overlay">
                 <table style="height: 100%;width:  100%;">

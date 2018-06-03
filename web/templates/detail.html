@@ -5,13 +5,192 @@
     <p class="lead">Details and trends of this game.</p>
     <hr class="my-4">
     <h1>Review Trend</h1>
-    <div id="trend_chart">
-      <svg></svg>
+    <div class="row">
+      <div class="col-md-9">
+        <div id="trend-placeholder" class="loader"></div>
+        <div id="trend-chart" style="display: none;">
+          <svg></svg>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <form>
+          <div class="form-group">
+            <label for="inputTrendStartDate">Start Date</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="inputTrendStartDate" placeholder="2018-01-01">
+              <div class="input-group-append">
+                <span class="input-group-text" id="inputTrendStartDateGroupPrepend">
+                  <span class="oi oi-calendar" title="Start Date" aria-hidden="true"></span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputTrendEndDate">End Date</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="inputTrendEndDate" placeholder="2018-06-01">
+              <div class="input-group-append">
+                <span class="input-group-text" id="inputTrendEndDateGroupPrepend">
+                  <span class="oi oi-calendar" title="End Date" aria-hidden="true"></span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-outline-info btn-lg btn-block" onclick="query_trend()">
+            Query
+          </button>
+        </form>
+      </div>
     </div>
-    <h1>Heated Topics</h1>
-    <p>ANOTHER GRAPH HERE.</p>
+    <hr>
+    <h1>Top Topics</h1>
+    <div class="row" style="padding-bottom: 1em;">
+      <div class="col-lg-8">
+        <form>
+          <div class="input-group">
+            <div class="input-group-prepend">
+          <span class="input-group-text">
+            <span class="oi oi-calendar" title="Date Range" aria-hidden="true"></span>
+            &nbsp;Date Range
+          </span>
+            </div>
+            <input type="text" class="form-control" id="inputTopicStartDate" disabled>
+            <div class="input-group-addon">
+              <span class="input-group-text">to</span>
+            </div>
+            <input type="text" class="form-control" id="inputTopicEndDate" onchange="calc_window()">
+            <div class="input-group-addon">
+              <span class="input-group-text">Length</span>
+            </div>
+            <select class="custom-select" id="inputTopicWindowLength" onchange="calc_window()">
+              <option value="3" selected>3</option>
+              <option value="7">7</option>
+              <option value="15">15</option>
+            </select>
+            <div class="input-group-append">
+              <button class="btn btn-outline-info" type="button" onclick="query_topic()">
+                Query
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h2>Emotion</h2>
+        <div id="emotion-placeholder" class="loader"></div>
+        <div id="emotion-pie" style="display: none;">
+          <svg class="align-content-center"></svg>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <h2>Tags</h2>
+        <div class="row">
+          <div class="col-md">
+            <div id="positive-tag-placeholder" class="loader"></div>
+            <div id="positive-tag-pie" style="display: none;">
+              <svg></svg>
+            </div>
+          </div>
+          <div class="col-md">
+            <div id="negative-tag-placeholder" class="loader"></div>
+            <div id="negative-tag-pie" style="display: none;">
+              <svg></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h2>Phrases</h2>
+    <div id="phrase-placeholder" class="loader"></div>
+    <div class="row">
+      <div class="col-md">
+        <ol id="up-phrase-centent">
+
+        </ol>
+      </div>
+      <div class="col-md">
+        <ol id="down-phrase-centent">
+
+        </ol>
+      </div>
+    </div>
+    <h2>Reviews</h2>
+    <div id="review-placeholder" class="loader"></div>
+    <div class="row">
+      <div class="col-md">
+        <div id="up-reviews">
+
+        </div>
+      </div>
+      <div class="col-md">
+        <div id="down-reviews">
+
+        </div>
+      </div>
+    </div>
   </div>
 {% endblock %}
 {% block extra_js %}
-<script src="/static/js/detail.js"></script>
+  <script src="/static/js/trend.js"></script>
+  <script src="/static/js/topic.js"></script>
+  <script>
+      const APPID = "{{ detail["app"]["appid"] }}";
+
+      function calc_window() {
+          let end_date = new Date($("#inputTopicEndDate").val());
+          let window_length = $("#inputTopicWindowLength").val();
+          let start_time = new Date(end_date.setDate(end_date.getDate() - window_length));
+          let start_date = start_time.getFullYear() +
+              "-" + (start_time.getMonth() + 1) +
+              "-" + start_time.getDate();
+          $("#inputTopicStartDate").val(start_date);
+      }
+
+      function query_trend() {
+          let start_date = $("#inputTrendStartDate").val();
+          let end_date = $("#inputTrendEndDate").val();
+          get_trend(APPID, start_date, end_date);
+      }
+
+      function query_topic() {
+          let end_date = $("#inputTopicEndDate").val();
+          let window_length = $("#inputTopicWindowLength").val();
+          get_topic(APPID, end_date, window_length);
+      }
+
+      // Do the first query
+      let day = new Date();
+      let end_date = day.getFullYear() +
+          "-" + (day.getMonth() + 1) +
+          "-" + day.getDate();
+      day.setDate(day.getDate() - 30);
+      let start_date = day.getFullYear() +
+          "-" + (day.getMonth() + 1) +
+          "-" + day.getDate();
+      $("#inputTrendStartDate").val(start_date).datepicker({
+          format: 'yyyy-mm-dd',
+          defaultViewDate: start_date
+      });
+      $("#inputTrendEndDate").val(end_date).datepicker({
+          format: 'yyyy-mm-dd',
+          defaultViewDate: end_date
+      });
+      get_trend(APPID, start_date, end_date);
+
+      $("#inputTopicEndDate").val(end_date).datepicker({
+          format: 'yyyy-mm-dd',
+          defaultViewDate: end_date
+      });
+      day.setDate(day.getDate() + 27);
+      start_date = day.getFullYear() +
+          "-" + (day.getMonth() + 1) +
+          "-" + day.getDate();
+      $("#inputTopicStartDate").val(start_date).datepicker({
+          format: 'yyyy-mm-dd',
+          defaultViewDate: start_date
+      });
+      query_topic();
+  </script>
 {% endblock %}

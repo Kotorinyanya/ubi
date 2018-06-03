@@ -20,9 +20,9 @@ class NLPMH:
 
         paralleldots.set_api_key(self.api_key)
 
-        self.text = self.piece_text(self.sorted_data_dict)
+        self.text = self.piece_text(self.sorted_data_dict, num_reviews)
 
-        self.go(self.text, self.language, num_reviews)
+        self.go(self.text, self.language)
 
         self.result = dict()
         self.result['keywords'] = self.key_words

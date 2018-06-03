@@ -31,6 +31,7 @@ def get_review_result(appid):
     except Exception as e:
         return fail(e)
     # Get result from DB.
+    init_dolphin()
     result = get_review_result_from_db(appid, window_length, window_end_date)
     if result:
         return succeed(result)
@@ -50,6 +51,7 @@ def get_review_changes(appid):
     except Exception as e:
         return fail(e)
     # Get results from DB.
+    init_dolphin()
     results = get_review_changes_from_db(appid, start_date, end_date)
     if results:
         return succeed(results)
@@ -60,6 +62,7 @@ def get_review_changes(appid):
 @app.route("/reviews/<int:recommendationid>")
 def get_review(recommendationid):
     # Get result from DB.
+    init_dolphin()
     result = get_review_from_db(recommendationid)
     if result:
         return succeed(result)
@@ -69,6 +72,7 @@ def get_review(recommendationid):
 
 @app.route("/")
 def index():
+    init_dolphin()
     apps = get_apps()
     return render_template("home.html", apps=apps)
 
@@ -80,10 +84,10 @@ def about():
 
 @app.route("/apps/<int:appid>")
 def detail(appid):
-    detail = get_detail(appid)
-    return render_template("detail.html", detail=detail)
+    init_dolphin()
+    details = get_detail(appid)
+    return render_template("detail.html", detail=details)
 
 
 if __name__ == "__main__":
-    init_dolphin()
     app.run(debug=True, host="0.0.0.0")
