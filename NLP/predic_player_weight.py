@@ -9,16 +9,13 @@ from sklearn.ensemble import RandomForestRegressor
 import pickle
 from sklearn.externals import joblib
 
-model_file = './models/CART.pkl'
-estimator = joblib.load(model_file)
-
 
 class PPW:
     # Predict Player Weight
     def __init__(self, data_dict):
         self.data_dict = data_dict
         self.model_file = './models/CART.pkl'
-        self.estimator = joblib.load(model_file)
+        self.estimator = joblib.load(self.model_file)
 
         self.feature_map = ['level', 'review_count', 'screenshot_count', 'workshop_item_count', 'badge_count',
                             'group_count',
