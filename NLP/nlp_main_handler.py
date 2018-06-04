@@ -1,6 +1,7 @@
 import paralleldots
 import json
 import os
+import re
 
 
 class NLPMH:
@@ -11,45 +12,60 @@ class NLPMH:
         # sort data by weight
         self.sorted_data_dict = self.sort_reviews_by_weight(self.data_dict)
 
-        try:
-            # self.api_key = os.environ.get('API_KEY')
-            # print(self.api_key)
-            self.api_key = api_key
-        except Exception as e:
-            raise Exception("please add your Paralleldots API_KEY to your environment variable")
+        # try:
+        #     self.api_key = os.environ.get('API_KEY')
+        #     print(self.api_key)
+        # except Exception as e:
+        #     raise Exception("please add your Paralleldots API_KEY to your environment variable")
+
+        self.api_key = api_key
 
         paralleldots.set_api_key(self.api_key)
 
         self.text = self.piece_text(self.sorted_data_dict, num_reviews)
+        self.text = self.strip_text(self.text, self.language)
 
-        self.go(self.text, self.language)
+        self.key_words, self.key_phrase, self.emotion = self.go(self.text, self.language)
 
         self.result = dict()
         self.result['keywords'] = self.key_words
         self.result['phrase'] = self.key_phrase
         self.result['emotion'] = self.emotion
 
+    def strip_text(self, text, language):
+        '''
+        For the reason that Paralledots API only support single language at a time,
+        chinese characters inside a English API call must be striped.
+        :param text:
+        :param language:
+        :return:
+        '''
+        # TODO: strip other language characters
+        return text
+
     def go(self, text, language):
-        if self.language == 'english':
-            self.key_words = paralleldots.keywords(text)
-            self.key_phrase = paralleldots.phrase_extractor(text)
-            self.emotion = paralleldots.emotion(text)
-        elif self.language == 'schinese':
-            self.key_words = {
+        if language == 'english':
+            key_words = paralleldots.keywords(text)
+            key_phrase = paralleldots.phrase_extractor(text)
+            emotion = paralleldots.emotion(text)
+        elif language == 'schinese':
+            key_words = [{
                 'Error': 'The lang_code is not among the supported languages, supported languages: en, pt, zh, es, de, fr, nl, it, ja, th, da, fi, el, ru, ar.',
-                'code': 400}  # API not yet available
-            self.key_phrase = paralleldots.multilang_keywords(text, 'zh')
-            self.emotion = paralleldots.emotion(text, 'zh')
-        elif self.language == 'french':
-            self.key_words = paralleldots.multilang_keywords(text, 'fr')
-            self.key_phrase = paralleldots.multilang_keywords(text, 'fr')
-            self.emotion = paralleldots.emotion(text, 'fr')
-        elif self.language == 'japanese':
-            self.key_words = paralleldots.multilang_keywords(text, 'ja')
-            self.key_phrase = paralleldots.multilang_keywords(text, 'ja')
-            self.emotion = paralleldots.emotion(text, 'ja')
+                'code': 400}]  # chinese API not yet available
+            key_phrase = paralleldots.multilang_keywords(text, 'zh')
+            emotion = paralleldots.emotion(text, 'zh')
+        elif language == 'french':
+            key_words = paralleldots.multilang_keywords(text, 'fr')
+            key_phrase = paralleldots.multilang_keywords(text, 'fr')
+            emotion = paralleldots.emotion(text, 'fr')
+        elif language == 'japanese':
+            key_words = paralleldots.multilang_keywords(text, 'ja')
+            key_phrase = paralleldots.multilang_keywords(text, 'ja')
+            emotion = paralleldots.emotion(text, 'ja')
         else:
-            self.key_words, self.key_phrase, self.emotion = [], [], []
+            key_words, key_phrase, emotion = [], [], []
+
+        return key_words, key_phrase, emotion
 
     def sort_reviews_by_weight(self, data_dict):
         weighted_data_dict = []
@@ -65,27 +81,27 @@ class NLPMH:
         data_dict = data_dict[:num_reviews]
         text = ''
         for i in range(0, len(data_dict)):
-            # if i <= len(data_dict) * 0.1:
-            #     text += data_dict[i]['content'] + '\n'
-            #     text += data_dict[i]['content'] + '\n'
-            #     text += data_dict[i]['content'] + '\n'
-            # elif i <= len(data_dict) * 0.2:
-            #     text += data_dict[i]['content'] + '\n'
-            #     text += data_dict[i]['content'] + '\n'
-            # else:
-            text += data_dict[i]['content'] + '\n'
+            if i <= len(data_dict) * 0.1:
+                text += data_dict[i]['content'] + '\n'
+                text += data_dict[i]['content'] + '\n'
+                text += data_dict[i]['content'] + '\n'
+            elif i <= len(data_dict) * 0.2:
+                text += data_dict[i]['content'] + '\n'
+                text += data_dict[i]['content'] + '\n'
+            else:
+                text += data_dict[i]['content'] + '\n'
 
         return text
 
 
 if __name__ == '__main__':
-    data = [{'content': '嘤嘤嘤，我是小可爱', 'language': 'schinese', 'review_weight': 0.7, 'user_weight': 0.8}]
-    f = open("out")
-    d = json.loads(f.read())
-    n = NLPMH(
-        d["positive"]["359550"]["15"]["2018-05-30"]["english"],
-        api_key='bSrmexJKMkkSQZIPmAUwRfh7ypzR0c6Gn9jhBegopu0',
-        num_reviews=1
-    )
-    # n = NLPMH(data, api_key='bSrmexJKMkkSQZIPmAUwRfh7ypzR0c6Gn9jhBegopu0')
+    data = [{'content': 'I am cute 嘤嘤嘤, 我是小可爱', 'language': 'english', 'review_weight': 0.7, 'user_weight': 0.8}]
+    # f = open("out")
+    # d = json.loads(f.read())
+    # n = NLPMH(
+    #     d["positive"]["359550"]["15"]["2018-05-30"]["english"],
+    #     api_key='bSrmexJKMkkSQZIPmAUwRfh7ypzR0c6Gn9jhBegopu0',
+    #     num_reviews=1
+    # )
+    n = NLPMH(data, api_key='bSrmexJKMkkSQZIPmAUwRfh7ypzR0c6Gn9jhBegopu0')
     print(n.result)
