@@ -1,7 +1,5 @@
 paralleldots
 keras
-pytorch
-torchvision
 tensorflow-gpu
 matplotlib
 scikit-learn
