@@ -1,6 +1,6 @@
 paralleldots
 keras
-tensorflow-gpu
+tensorflow
 matplotlib
 scikit-learn
 nltk
