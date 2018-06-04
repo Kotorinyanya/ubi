@@ -34,14 +34,17 @@ class NLPMH:
 
     def strip_text(self, text, language):
         '''
-        For the reason that Paralledots API only support single language at a time,
+        For the reason that Paralledots API only support single language at one call,
         chinese characters inside a English API call must be striped.
         :param text:
         :param language:
         :return:
         '''
-        # TODO: strip other language characters
-        return text
+        if language == 'english':
+            return ''.join([i if ord(i) < 128 else ' ' for i in text])
+        else:
+            # TODO: strip other language characters
+            return text
 
     def go(self, text, language):
         if language == 'english':
@@ -101,7 +104,7 @@ class NLPMH:
 
 
 if __name__ == '__main__':
-    data1 = [{'content': 'I am cute', 'language': 'english', 'review_weight': 0.7, 'user_weight': 0.8}]
+    data1 = [{'content': 'I am cute 嘤嘤嘤', 'language': 'english', 'review_weight': 0.7, 'user_weight': 0.8}]
     data2 = [{'content': '私は可愛いです', 'language': 'japanese', 'review_weight': 0.5}]
     data3 = [{'content': '嘤嘤嘤，我是小可爱', 'language': 'schinese', 'review_weight': 0.5, 'user_weight': 0.7}]
     data4 = [{'content': 'Je suis un peu mignon', 'language': 'french', 'review_weight': 0.5, 'user_weight': 0.7}]
@@ -112,5 +115,5 @@ if __name__ == '__main__':
     #     api_key='<api key>',
     #     num_reviews=1
     # )
-    n = NLPMH(data4, api_key='<api key>')
+    n = NLPMH(data1, api_key='<api key>')
     print(n.result)
