@@ -9,7 +9,6 @@ nltk
 matplotlib
 seaborn
 pandas
-jupyter
 tqdm
 xlrd
 jieba

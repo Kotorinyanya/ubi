@@ -70,7 +70,13 @@ class NLPMH:
     def sort_reviews_by_weight(self, data_dict):
         weighted_data_dict = []
         for data in data_dict:
-            weight = data['review_weight'] * 2 + data['user_weight']
+            review_weight, user_weight = 0, 0
+            try:
+                review_weight = data['review_weight']
+                user_weight = data['user_weight']
+            except:
+                pass
+            weight = review_weight + user_weight
             data['weight'] = weight
             weighted_data_dict.append(data)
 
@@ -96,7 +102,7 @@ class NLPMH:
 
 if __name__ == '__main__':
     data1 = [{'content': 'I am cute', 'language': 'english', 'review_weight': 0.7, 'user_weight': 0.8}]
-    data2 = [{'content': '私は可愛いです', 'language': 'japanese', 'review_weight': 0.5, 'user_weight': 0.7}]
+    data2 = [{'content': '私は可愛いです', 'language': 'japanese', 'review_weight': 0.5}]
     data3 = [{'content': '嘤嘤嘤，我是小可爱', 'language': 'schinese', 'review_weight': 0.5, 'user_weight': 0.7}]
     data4 = [{'content': 'Je suis un peu mignon', 'language': 'french', 'review_weight': 0.5, 'user_weight': 0.7}]
     # f = open("out")
@@ -106,5 +112,5 @@ if __name__ == '__main__':
     #     api_key='<api key>',
     #     num_reviews=1
     # )
-    n = NLPMH(data1, api_key='<api key>')
+    n = NLPMH(data4, api_key='<api key>')
     print(n.result)
