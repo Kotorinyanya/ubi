@@ -84,7 +84,8 @@ if __name__ == '__main__':
     d = json.loads(f.read())
     n = NLPMH(
         d["positive"]["359550"]["15"]["2018-05-30"]["english"],
-        api_key='bSrmexJKMkkSQZIPmAUwRfh7ypzR0c6Gn9jhBegopu0'
+        api_key='bSrmexJKMkkSQZIPmAUwRfh7ypzR0c6Gn9jhBegopu0',
+        num_reviews=1
     )
     # n = NLPMH(data, api_key='bSrmexJKMkkSQZIPmAUwRfh7ypzR0c6Gn9jhBegopu0')
     print(n.result)
