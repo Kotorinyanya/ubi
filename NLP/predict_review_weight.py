@@ -59,29 +59,15 @@ if __name__ == '__main__':
     data_dict = [
         {
             'content': 'GTA:Hood edition,  With added The Sims\n\nBecause every gangsta knows that they need to keep their hair and clothes looking fresh..',
-            'language': 'english',
-            'vote_up_count': 0.0,
-            'vote_funny_count': 0.0,
-            'comment_count': 0.0,
-            'steam_weight': 0.47619},
-        {'content': 'IMO, the best GTA. If not just for the voice acting.',
-         'language': 'english',
-         'vote_up_count': 0.0,
-         'vote_funny_count': 0.0,
-         'comment_count': 1.0,
-         'steam_weight': 0.47619},
-        {'content': 'Gimme a ticket',
-         'language': 'english',
-         'vote_up_count': 0.0,
-         'vote_funny_count': 0.0,
-         'comment_count': 1.0,
-         'steam_weight': 0.489392},
+            'language': 'english'},
+        {
+            'content': 'IMO, the best GTA. If not just for the voice acting.',
+            'language': 'english'},
+        {
+            'content': 'Gimme a ticket',
+            'language': 'english'},
         {
             'content': "Great on PS2, but sadly unplayable on the PC. Controller support is terrible and the interface doesn't work on many resolutions. This game has not aged well.  8/10 on PS2, 0/10 on PC - Do not buy.",
-            'language': 'english',
-            'vote_up_count': 9.0,
-            'vote_funny_count': 0.0,
-            'comment_count': 0.0,
-            'steam_weight': 0.462636}]
+            'language': 'english'}]
     r = PRW(data_dict)
     print(r.weights)

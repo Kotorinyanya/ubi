@@ -95,13 +95,16 @@ class NLPMH:
 
 
 if __name__ == '__main__':
-    data = [{'content': 'I am cute 嘤嘤嘤, 我是小可爱', 'language': 'english', 'review_weight': 0.7, 'user_weight': 0.8}]
+    data1 = [{'content': 'I am cute', 'language': 'english', 'review_weight': 0.7, 'user_weight': 0.8}]
+    data2 = [{'content': '私は可愛いです', 'language': 'japanese', 'review_weight': 0.5, 'user_weight': 0.7}]
+    data3 = [{'content': '嘤嘤嘤，我是小可爱', 'language': 'schinese', 'review_weight': 0.5, 'user_weight': 0.7}]
+    data4 = [{'content': 'Je suis un peu mignon', 'language': 'french', 'review_weight': 0.5, 'user_weight': 0.7}]
     # f = open("out")
     # d = json.loads(f.read())
     # n = NLPMH(
     #     d["positive"]["359550"]["15"]["2018-05-30"]["english"],
-    #     api_key='bSrmexJKMkkSQZIPmAUwRfh7ypzR0c6Gn9jhBegopu0',
+    #     api_key='<api key>',
     #     num_reviews=1
     # )
-    n = NLPMH(data, api_key='bSrmexJKMkkSQZIPmAUwRfh7ypzR0c6Gn9jhBegopu0')
+    n = NLPMH(data1, api_key='<api key>')
     print(n.result)
