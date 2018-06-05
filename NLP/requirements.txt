@@ -1,6 +1,6 @@
 paralleldots
 keras
-tensorflow-gpu
+tensorflow
 matplotlib
 scikit-learn
 nltk
@@ -10,5 +10,5 @@ pandas
 tqdm
 xlrd
 jieba
-tinysegmenter
+tinysegmenter3
 cltk

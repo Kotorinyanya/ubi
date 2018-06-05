@@ -110,6 +110,7 @@ class ReviewSpider(object):
                 "avatar": "",               # as default value
                 "country": "",              # as default value
                 "level": 0,                 # as default value
+                "weight": 0,                # as default value
                 "games": json.dumps([]),    # as default value
                 "review_count": review["author"]["num_reviews"],
                 "screenshot_count": 0,      # as default value
@@ -123,7 +124,7 @@ class ReviewSpider(object):
 
             # Save a basic user if not already in.
             if not self._has_user(parsed_user["steamid"]):
-                create_sql = "INSERT INTO `users` (`steamid`, `nickname`, `avatar`," \
+                user_sql = "INSERT INTO `users` (`steamid`, `nickname`, `avatar`," \
                       "`country`, `level`, `games`," \
                       "`review_count`, `screenshot_count`, `workshop_item_count`," \
                       "`badge_count`, `group_count`," \
@@ -133,15 +134,31 @@ class ReviewSpider(object):
                       "%(screenshot_count)s, %(workshop_item_count)s," \
                       "%(badge_count)s, %(group_count)s, %(game_count)s, %(friend_count)s," \
                       "%(registered_at)s)"
-                with self.dolphin.cursor() as cursor:
-                    try:
-                        cursor.execute(create_sql, parsed_user)
-                    except Exception as e:
-                        logging.info(
-                            "Failed to save user [%s]: %s",
-                            str(review["author"]["steamid"]),
-                            e
-                        )
+            else:
+                user_sql = "UPDATE " \
+                             "`users` " \
+                             "SET " \
+                             "`nickname` = %(steamid)s, " \
+                             "`avatar` = %(avatar)s, " \
+                             "`country` = %(country)s, " \
+                             "`level` = %(level)s, " \
+                             "`games` = %(games)s, " \
+                             "`review_count` = %(review_count)s, " \
+                             "`screenshot_count` = %(screenshot_count)s, " \
+                             "`workshop_item_count` = %(workshop_item_count)s, " \
+                             "`badge_count` = %(badge_count)s, " \
+                             "`group_count` = %(group_count)s, " \
+                             "`game_count` = %(game_count)s, " \
+                             "`friend_count` = %(friend_count)s"
+            with self.dolphin.cursor() as cursor:
+                try:
+                    cursor.execute(user_sql, parsed_user)
+                except Exception as e:
+                    logging.info(
+                        "Failed to save user [%s]: %s",
+                        str(review["author"]["steamid"]),
+                        e
+                    )
 
             # Save the review and do stat.
             review_date = datetime.datetime.fromtimestamp(parsed_review["edited_at"]).strftime('%Y-%m-%d')
@@ -169,19 +186,19 @@ class ReviewSpider(object):
                     cursor.execute(update_sql, (self.appid, review_date))
             else:
                 # An update to an existing review.
-                create_sql = "UPDATE `reviews` SET" \
-                      "`playtime_forever` = %(playtime_forever)s," \
-                      "`playtime_last_two_weeks` = %(playtime_last_two_weeks)s," \
-                      "`last_played` = %(last_played)s," \
-                      "`language` = %(language)s," \
-                      "`content` = %(content)s," \
-                      "`steam_weight` = %(steam_weight)s," \
-                      "`weight` = %(weight)s," \
-                      "`type` = %(type)s," \
-                      "`vote_up_count` = %(vote_up_count)s," \
-                      "`vote_funny_count` = %(vote_funny_count)s," \
-                      "`comment_count` = %(comment_count)s," \
-                      "`published_at` = %(published_at)s," \
+                create_sql = "UPDATE `reviews` SET " \
+                      "`playtime_forever` = %(playtime_forever)s, " \
+                      "`playtime_last_two_weeks` = %(playtime_last_two_weeks)s, " \
+                      "`last_played` = %(last_played)s, " \
+                      "`language` = %(language)s, " \
+                      "`content` = %(content)s, " \
+                      "`steam_weight` = %(steam_weight)s, " \
+                      "`weight` = %(weight)s, " \
+                      "`type` = %(type)s, " \
+                      "`vote_up_count` = %(vote_up_count)s, " \
+                      "`vote_funny_count` = %(vote_funny_count)s, " \
+                      "`comment_count` = %(comment_count)s, " \
+                      "`published_at` = %(published_at)s, " \
                       "`edited_at` = %(edited_at)s " \
                       "WHERE `recommendationid` = %(recommendationid)s"
                 if parsed_review["type"] != old_review_type:
